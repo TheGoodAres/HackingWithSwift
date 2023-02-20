@@ -7,15 +7,42 @@
 
 import SwiftUI
 
+struct BigBlueText: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.largeTitle)
+            .foregroundColor(.blue)
+    }
+}
+
+extension View {
+    func bigBlueTitle() -> some View {
+        modifier(BigBlueText())
+    }
+}
 struct ContentView: View {
+    @State private var agreedToTerms = false
+    @State private var agreedToPrivacyPolicy = false
+    @State private var agreedToEmails = false
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+        let agreedToAll = Binding<Bool>(
+            get: {
+                agreedToTerms && agreedToPrivacyPolicy && agreedToEmails
+            },
+            set: {
+                agreedToTerms = $0
+                agreedToPrivacyPolicy = $0
+                agreedToEmails = $0
+            }
+        )
+
+        return VStack {
+            Toggle("Agree to terms", isOn: $agreedToTerms)
+            Toggle("Agree to privacy policy", isOn: $agreedToPrivacyPolicy)
+            Toggle("Agree to receive shipping emails", isOn: $agreedToEmails)
+            Toggle("Agree to all", isOn: agreedToAll)
         }
-        .padding()
     }
 }
 
